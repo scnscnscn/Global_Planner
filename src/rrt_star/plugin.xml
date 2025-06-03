@@ -1,0 +1,5 @@
+<library path="lib/librrt_star">
+<class name="rrtstar_planner/rrtstarPlannerROS" type="rrtstar_planner::rrtstarPlannerROS" base_class_type="nav_core::BaseGlobalPlanner">
+<description>This is RRT Star Global Planner Plugin by Rafael Barreto.</description>
+</class>
+</library>
