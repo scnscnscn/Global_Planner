@@ -10,7 +10,7 @@
     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
     <!-- ADDITION: Custom RRT* global planner developed under MIT License -->
     <!-- Compatible with Apache 2.0 (used by TurtleBot3) -->
-    <param name="base_global_planner" value="RRTstar_planner/RRTstarPlannerROS" /> 
+    <param name="base_global_planner" value="rrtstar_planner/rrtstarPlannerROS" /> 
     <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
