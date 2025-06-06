@@ -32,34 +32,41 @@ namespace RRTstar_planner
    * @param costmap_ros The costmap ROS wrapper
    */
   void RRTstarPlannerROS::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
-  {
+{
     if (!initialized_)
-        {
-            costmap_ros_ = costmap_ros;
-            costmap_ = costmap_ros_->getCostmap();
-            frame_id_ = costmap_ros_->getGlobalFrameID();
+    {
+        costmap_ros_ = costmap_ros;
+        costmap_ = costmap_ros_->getCostmap();
+        frame_id_ = costmap_ros_->getGlobalFrameID();
 
-            resolution_ = costmap_->getResolution();
+        resolution_ = costmap_->getResolution();
 
-            search_radius_ = 0.5;  
-            goal_radius_ = 0.1;  
+        //using hardcoded values for now, can be changed to parameters later
+        search_radius_ = 0.5;  
+        goal_radius_ = 0.1;  
 
-            max_nodes_num_ = 1000000;  
-            plan_time_out_ = 12.0;  
-            
-            epsilon_min_ = 0.001;  
-            epsilon_max_ = 0.12;  
+        max_nodes_num_ = 1000000;  
+        plan_time_out_ = 12.0;  
+        
+        epsilon_min_ = 0.001;  
+        epsilon_max_ = 0.12;  
 
-            path_point_spacing_ = 0.1;
-            angle_difference_ = M_PI / 4;
+        path_point_spacing_ = 0.1;
+        angle_difference_ = M_PI / 4;
 
-            ROS_INFO("RRTstarPlannerROS initialized with name: %s", name.c_str());
-            initialized_ = true;
-        }else
-        {
-            ROS_ERROR("RRTstarPlannerROS has not been initialized, please call initialize() before using it.");
-        }
-  }
+        // 初始化 Publisher 对象
+        ros::NodeHandle private_nh("~/" + name);
+        plan_pub_ = private_nh.advertise<nav_msgs::Path>("plan", 1);
+        marker_pub_ = private_nh.advertise<visualization_msgs::Marker>("tree_marker", 1);
+
+        ROS_INFO("RRTstarPlannerROS initialized with name: %s", name.c_str());
+        initialized_ = true;
+    }
+    else
+    {
+        ROS_ERROR("RRTstarPlannerROS has not been initialized, please call initialize() before using it.");
+    }
+}
 
   /**
    * @brief Normalize angle to specified range
