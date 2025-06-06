@@ -10,21 +10,22 @@
 #include <cmath>
 #include <vector>
 #include <visualization_msgs/Marker.h>
+#include <random>
 
 struct Node
 {
-  double x;// x coordinate of the node
-  double y;// y coordinate of the node
-  int node_id;// unique identifier for the node
-	int parent_id;// identifier of the parent node
-  double cost;// cost to reach this node from the start node
+  double x;
+  double y;
+  int node_id;
+  int parent_id;
+  double cost;
   
-  bool operator ==(const Node& node) 
+  bool operator ==(const Node& node) const 
   {
     return (fabs(x - node.x) < 0.0001) && (fabs(y - node.y) < 0.0001) && (node_id == node.node_id) && (parent_id == node.parent_id) && (fabs(cost - node.cost) < 0.0001) ;
   }
 
-  bool operator !=(const Node& node) 
+  bool operator !=(const Node& node) const 
   {
     if((fabs(x - node.x) > 0.0001) || (fabs(y - node.y) > 0.0001) || (node_id != node.node_id) || (parent_id != node.parent_id) || (fabs(cost - node.cost) > 0.0001))
       return true;
@@ -41,18 +42,19 @@ enum GetPlanMode
   CONNECT2TO1 = 4,
 };
 
-namespace rrtstar_planner 
+namespace RRTstar_planner 
 {
 
-  class rrtstarPlannerROS : public nav_core::BaseGlobalPlanner 
+  class RRTstarPlannerROS : public nav_core::BaseGlobalPlanner 
   {
 
     public:
-      rrtstarPlannerROS();
-      rrtstarPlannerROS(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
-      ~rrtstarPlannerROS();
+      RRTstarPlannerROS();
+      RRTstarPlannerROS(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
+      ~RRTstarPlannerROS();
 
       void initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
+
       bool makePlan(const geometry_msgs::PoseStamped& start,
                     const geometry_msgs::PoseStamped& goal,
                     std::vector<geometry_msgs::PoseStamped>& plan);
@@ -67,30 +69,30 @@ namespace rrtstar_planner
                            Node& connect_node,
                            std::vector<geometry_msgs::PoseStamped>& plan,
                            GetPlanMode mode);
-
       double distance(double px1, double py1, double px2, double py2);
-
       std::pair<double, double> sampleFree(); 
 
       bool collision(double x, double y); 
       bool isAroundFree(double wx, double wy);
+
       bool isConnect(Node new_node,std::vector< Node >& another_tree,std::vector< Node >& current_tree,Node& connect_node);
       Node getNearest(std::vector<Node> nodes, std::pair<double, double> p_rand); 
-      Node chooseParent(Node nn, Node newnode, std::vector<Node> nodes);
+
+      Node chooseParent(Node nn, Node newnode, std::vector<Node> nodes); 
 
       void rewire(std::vector<Node>& nodes, Node newnode);
 
+    
       std::pair<double, double> steer(double x1, double y1,double x2, double y2); 
 
       bool obstacleFree(Node node_nearest, double px, double py); 
-
       bool pointCircleCollision(double x1, double y1, double x2, double y2, double radius);
 
       void optimizationOrientation(std::vector<geometry_msgs::PoseStamped> &plan);
 
       void insertPointForPath(std::vector< std::pair<double, double> >& pathin,double param);
 
-      int optimizationPath(std::vector< std::pair<double, double> >& plan,double movement_angle_range = M_PI/4);
+      int optimizationPath(std::vector< std::pair<double, double> >& plan,double movement_angle_range = M_PI/4); 
 
       bool isLineFree(const std::pair<double, double> p1,const std::pair<double, double> p2);
 
@@ -124,7 +126,11 @@ namespace rrtstar_planner
 
       double resolution_;
       bool initialized_;
-
+      
+      std::random_device rd_;
+      std::mt19937 gen_;
+      std::uniform_int_distribution<> int_dist_;
+      std::uniform_real_distribution<> real_dist_;
   };
-} // rrtstar_planner namespace
+} // RRTstar_planner namespace
 #endif
